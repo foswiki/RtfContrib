@@ -1,0 +1,69 @@
+---+!! RtfContrib
+<!--
+   * Set SHORTDESCRIPTION = Extension to translate Foswiki markup to RTF
+-->
+%SHORTDESCRIPTION%
+
+%TOC%
+
+---++ Usage
+The current use is restricted to exporting wiki content from a topic and insert it
+into a RTF template file. This template file contains tags like
+=%<nop>FORMFIELD{"FirstName"}%= and =%<nop>TEXT%= which are replaced with the data extracted from 
+the current topic. When you call the =rtf= CGI script on a topic like this
+<verbatim>
+http://your.domain.com/cgi-bin/foswiki/rtf/Main/TestUser?template=Main.UserForm.user-form.rtf&filename=Hello.rtf
+</verbatim>
+the script will use the RTF template =user-form.rtf= attached to the topic =Main.UserForm=
+and process it as outlined. The result is then cached in a configurable =CacheDir= under the
+name =Hello.rtf= in addition to sending it to the browser. Your browser can be configured to open up
+the received file with an appropriate word processing tool.
+
+---++ Template tags
+The following tags are replaced with data drawn from a topic 
+| *Name* | *Description* |
+| =%<nop>TEXT%= | topic text |
+| =%<nop>SECTION{"name"}%= | named topic section |
+| =%<nop>FORMFIELD{"name"}%= | formfield of an attched <nop>DataForm |
+| =%<nop>ATTACHMENT{"name" format="..."}%= | information about attached files |
+| =%<nop>IMAGE{"url"}%= | inserts an image downloaded from the given url; \
+  supported image formats are jpeg, png, ... |
+
+---++ Customizing RTF output
+The basic layout of the RTF output is specified by an RTF file that serves as a template.
+So you have the freedom to create such a document as you like. This extension comes with
+a few predefined templates that might help you to adjust them to you own needs.
+
+In addition there are some preference variables that determine the formatting of output
+generate while translating Foswiki markup to RTF.
+
+   * headings: ...
+   * lists: ...
+   * ...
+
+---++ Configuration
+   * =$Foswiki::cfg{RtfContrib}{Debug}=:
+     debugging flag, defaults to =0=
+   * =$Foswiki::cfg{RtfContrib}{CacheDir}=:
+     directory where generated RTF files are cached, defaults to %PUBURLPATH%/%SYSTEMWEB%/%TOPIC%
+   * =$Foswiki::cfg{RtfContrib}{DefaultRtfTemplate}=:
+     RTF file used as a template to create the final RTF file from it when exporting a topic,
+     this can be overriden using the =template= urlparam on the =rtf= CGI call
+
+---++ Installation Instructions
+
+%$INSTALL_INSTRUCTIONS%
+
+---++ Plugin Info
+
+|  Plugin Author(s): | Foswiki:Main/MichaelDaum |
+|  Copyright: | &copy; 2007-2009 Michael Daum http://michaeldaumconsulting.com |
+|  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
+|  Release: | %$RELEASE% |
+|  Version: | %$VERSION% |
+|  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  Dependencies: | %$DEPENDENCIES% |
+|  Plugin Home: | Foswiki:Extensions/RtfContrib |
+|  Support: | Foswiki:Support/RtfContrib |
+
+<!-- Do _not_ attempt to edit this topic; it is auto-generated. Please add comments/questions/remarks to the Dev topic instead. -->

@@ -1,0 +1,1 @@
+Foswiki::Plugins::DBCachePlugin,>=1.52,perl,Required; download from Foswiki:Extensions/DBCachePlugin 
