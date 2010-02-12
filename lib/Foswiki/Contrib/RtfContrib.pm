@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2009 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2010 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@ use strict;
 use vars qw($VERSION $RELEASE);
 
 $VERSION = '$Rev$';
-$RELEASE = 'v1.00';
+$RELEASE = 'v2.00';
 
 ################################################################################
 sub export {

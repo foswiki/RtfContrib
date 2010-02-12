@@ -57,11 +57,12 @@ generate while translating Foswiki markup to RTF.
 ---++ Plugin Info
 
 |  Plugin Author(s): | Foswiki:Main/MichaelDaum |
-|  Copyright: | &copy; 2007-2009 Michael Daum http://michaeldaumconsulting.com |
+|  Copyright: | &copy; 2007-2010 Michael Daum http://michaeldaumconsulting.com |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  12 Feb 2010: | language support in RTF templates |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Plugin Home: | Foswiki:Extensions/RtfContrib |
 |  Support: | Foswiki:Support/RtfContrib |

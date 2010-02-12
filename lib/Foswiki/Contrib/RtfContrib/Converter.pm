@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2009 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2010 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -22,6 +22,10 @@ use Foswiki::Plugins::DBCachePlugin::Core;
 use Foswiki::Attrs ();
 use Foswiki::Sandbox ();
 
+# from Foswiki::Render
+our $STARTWW = qr/^|(?<=[\s\(])/m;
+our $ENDWW   = qr/$|(?=[\s,.;:!?)])/m;
+
 $debug = $Foswiki::cfg{RtfContrib}{Debug} || 0;
 
 ################################################################################
@@ -42,9 +46,9 @@ sub new {
   $this->{topic} = $session->{topicName};
   $this->{query} = Foswiki::Func::getCgiQuery();
 
-  my $pubDir = $Foswiki::cfg{PubDir} || $Foswiki::cfg{PubDir};
-  my $systemWebName = $Foswiki::cfg{SystemWebName} || $Foswiki::cfg{SystemWebName};
-  my $cacheDir = $Foswiki::cfg{RtfContrib}{CacheDir} || $Foswiki::cfg{RtfContrib}{CacheDir};
+  my $pubDir = $Foswiki::cfg{PubDir};
+  my $systemWebName = $Foswiki::cfg{SystemWebName};
+  my $cacheDir = $Foswiki::cfg{RtfContrib}{CacheDir};
 
   $this->{cacheDir} = 
     $cacheDir 
@@ -76,6 +80,88 @@ sub new {
 
   return $this;
 }
+
+################################################################################
+sub readStrings {
+  my $this = shift;
+
+  return if defined $this->{strings};
+
+  $this->{strings} = ();
+  %{$this->{strings}} = %{$this->{defaultStrings}} 
+    if $this->{defaultStrings};
+  
+  my $translationsTopic = $this->{translationsTopic} || $Foswiki::cfg{RtfContrib}{Translations};
+  return unless $translationsTopic;
+
+  my ($web, $topic) = Foswiki::Func::normalizeWebTopicName($Foswiki::cfg{SystemWebName}, $translationsTopic);
+
+  unless (Foswiki::Func::topicExists($web, $topic)) {
+    writeDebug("ERROR: translation table not found at $web.$topic");
+    return;
+  }
+  my ($meta, $text) = Foswiki::Func::readTopic($web, $topic);
+
+  my $nrRows = 0;
+  # | 1. KEY | 2. DE | 3. EN | 4. FR |
+  while ($text =~ /\n\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|/g) {
+    $nrRows++;
+    next if $nrRows == 1; # skip table header
+
+    my $cell1 = $this->tml2rtf($1);
+    my $cell2 = $this->tml2rtf($2);
+    my $cell3 = $this->tml2rtf($3);
+    my $cell4 = $this->tml2rtf($4);
+    strip($cell1);
+    strip($cell2);
+    strip($cell3);
+    strip($cell4);
+    writeDebug("found translation '$cell1', '$cell2', '$cell3', '$cell4'");
+    unless ($cell1 || $cell2 || $cell3 || $cell4) { # skip empty rows
+      $nrRows--;
+      next;
+    }
+    $this->{strings}{$cell1}{DE} = $cell2;
+    $this->{strings}{$cell1}{EN} = $cell3;
+    $this->{strings}{$cell1}{FR} = $cell4;
+
+    $this->{strings}{$cell2}{DE} = $cell2;
+    $this->{strings}{$cell2}{EN} = $cell3;
+    $this->{strings}{$cell2}{FR} = $cell4;
+
+    $this->{strings}{$cell3}{DE} = $cell2;
+    $this->{strings}{$cell3}{EN} = $cell3;
+    $this->{strings}{$cell3}{FR} = $cell4;
+
+    $this->{strings}{$cell4}{DE} = $cell2;
+    $this->{strings}{$cell4}{EN} = $cell3;
+    $this->{strings}{$cell4}{FR} = $cell4;
+  }
+}
+
+################################################################################
+sub translate {
+  my ($this, $lang, $key) = @_;
+
+  $this->readStrings();
+
+  return $key unless $this->{strings}{$key};
+
+  $lang = uc($lang);
+  my $translation = $this->{strings}{$key}{$lang} || $key;
+
+  writeDebug("translating $key -> $translation");
+
+  return $translation;
+}
+
+################################################################################
+# static helper
+sub strip {
+  $_[0] =~ s/^\s+//o;
+  $_[0] =~ s/\s+$//o;
+}
+
 
 ################################################################################
 # caches the resulting file into a file
@@ -459,7 +545,7 @@ sub tml2rtf {
 
   return '' unless $text;
 
-  #writeDebug("tml2rtf - text before=$text");
+  writeDebug("tml2rtf - text before=$text");
 
   # escape chars which are meaningful in rtf
   $text =~ s/([\\{}])/\\$1/go; 
@@ -470,10 +556,10 @@ sub tml2rtf {
   $text =~ s/<br ?\/?>/\\line /g;
   $text =~ s/\%BR\%/\\line /g;
 
-  # simple fonts
-  $text =~ s/\*(.+?)\*/{\\b $1}/g; # bold
-  $text =~ s/_(.+?)_/{\\i $1}/g; # italic
-  $text =~ s/__(.+?)__/{\\i\\b $1}/g; # bold italic
+  # simple fonts, TODO: fixed font missing
+  $text =~ s/${STARTWW}__(\S+?|\S[^\n]*?\S)__$ENDWW/{\\i\\b $1}/gm; # bold italic
+  $text =~ s/${STARTWW}\*(\S+?|\S[^\n]*?\S)\*$ENDWW/{\\b $1}/gm; # bold
+  $text =~ s/${STARTWW}\_(\S+?|\S[^\n]*?\S)\_$ENDWW/{\\i $1}/gm; # italic
 
 #  $text =~ s/\%0d/\n/g; # SMELL: do we still need them?
 #  $text =~ s/\%0a/\r/g;
@@ -489,16 +575,26 @@ sub tml2rtf {
 
   # encode special chars
   $text =~ s/Ä/\\'c4/go;
+  $text =~ s/&Auml;/\\'c4/go;
   $text =~ s/ä/\\'e4/go;
-  $text =~ s/ö/\\'f6/go;
-  $text =~ s/ü/\\'fc/go;
+  $text =~ s/&auml;/\\'e4/go;
   $text =~ s/Ö/\\'d6/go;
+  $text =~ s/&Ouml;/\\'d6/go;
+  $text =~ s/ö/\\'f6/go;
+  $text =~ s/&ouml;/\\'f6/go;
   $text =~ s/Ü/\\'dc/go;
+  $text =~ s/&Uuml;/\\'dc/go;
+  $text =~ s/ü/\\'fc/go;
+  $text =~ s/&uuml;/\\'fc/go;
   $text =~ s/ß/\\'df/go;
+  $text =~ s/&szlig;/\\'df/go;
+  $text =~ s/&ocirc;/\\'f4/go; # Role
+  $text =~ s/&egrave;/\\'e8/go;
+  $text =~ s/&eacute;/\\'e9/go;
 
   # TODO: have them all
 
-  #writeDebug("tml2rtf - text after=$text");
+  writeDebug("tml2rtf - text after=$text");
 
   return $text;
 }

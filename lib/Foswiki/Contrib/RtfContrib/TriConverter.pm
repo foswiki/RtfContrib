@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2009 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2010 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,54 +20,73 @@ use Foswiki::Plugins::DBCachePlugin::Core ();
 use Foswiki::Plugins::EmployeePortalPlugin::Core ();
 use Foswiki::Plugins::ClassificationPlugin::Core ();
 use Foswiki::Attrs ();
-use vars qw(%strings $debug);
+use vars qw(%defaultStrings $debug);
 
-
-%strings = (
-  DE => {
-    'description' => 'Projektumfang',
-    'tasks' => 'Aufgaben',
-    'technologies' => 'Technologien',
-    'tools' => 'Tools',
-    'skills' => 'Kenntnisse',
-    'MainFocus' => 'Schwerpunkte',
-    'Programming' => 'Programmiersprachen',
-    'Operating Systems' => 'Betriebssysteme',
-    'Databases' => 'Datenbanken',
-    'Methods' => 'Methoden/Werkzeuge',
-    'Communication' => 'Kommunikation',
-    'Middleware' => 'Middleware',
-    'Frameworks' => 'Frameworks'
+%defaultStrings = (
+  'Description' => {
+    DE => 'Projektbeschreibung',
+    EN => 'Project description',
+    FR => 'Description du projet',
   },
-  EN => {
-    'description' => 'Description',
-    'tasks' => 'Role',
-    'technologies' => 'Technologies',
-    'tools' => 'Tools',
-    'skills' => 'Skills',
-    'MainFocus' => 'Main Focus',
-    'Programming' => 'Programming Languages',
-    'Operating Systems' => 'Operating Systems',
-    'Databases' => 'Databases',
-    'Methods' => 'Methods/Tools',
-    'Communication' => 'Communication',
-    'Middleware' => 'Middleware',
-    'Frameworks' => 'Frameworks'
+  'Role' => {
+    DE => 'Aufgaben',
+    EN => 'Role',
+    FR => 'R\\\'f4le',
   },
-  FR => {
-    'description' => 'Description',
-    'tasks' => 'R\\\'f4le',
-    'technologies' => 'Technologies',
-    'tools' => 'Tools',
-    'skills' => 'Connaissances',
-    'MainFocus' => 'Points forts',
-    'Programming' => 'Langues de programmation',
-    'Operating Systems' => 'Syst\\\'e8me d\'exploitation',
-    'Databases' => 'Base de donn\\\'e9es',
-    'Methods' => 'M\\\'e9thodes',
-    'Communication' => 'Communication',
-    'Middleware' => 'Middleware',
-    'Frameworks' => 'Frameworks'
+  'Technologies' => {
+    'DE' => 'Technologien',
+    'EN' => 'Technologies',
+    'FR' => 'Technologies',
+  },
+  'Tools' => {
+    'DE' => 'Tools',
+    'EN' => 'Tools',
+    'FR' => 'Tools',
+  },
+  'Skills' => {
+    'DE' => 'Kenntnisse',
+    'EN' => 'Skills',
+    'FR' => 'Connaissances',
+  },
+  'Main Focus' => {
+    'DE' => 'Schwerpunkte',
+    'EN' => 'Main Focus',
+    'FR' => 'Points forts',
+  },
+  'Programming' => {
+    'DE' => 'Programmiersprachen',
+    'EN' => 'Programming Languages',
+    'FR' => 'Langues de programmation',
+  },
+  'Operating Systems' => {
+    'DE' => 'Betriebssysteme',
+    'EN' => 'Operating Systems',
+    'FR' => 'Syst\\\'e8me d\'exploitation',
+  },
+  'Databases' => {
+    'DE' => 'Datenbanken',
+    'EN' => 'Databases',
+    'FR' => 'Base de donn\\\'e9es',
+  },
+  'Methods' => {
+    'DE' => 'Methoden/Werkzeuge',
+    'EN' => 'Methods/Tools',
+    'FR' => 'M\\\'e9thodes',
+  },
+  'Communication' => {
+    'DE' => 'Kommunikation',
+    'EN' => 'Communication',
+    'FR' => 'Communication',
+  },
+  'Middleware' => {
+    'DE' => 'Middleware',
+    'EN' => 'Middleware',
+    'FR' => 'Middleware',
+  },
+  'Frameworks' => {
+    'DE' => 'Frameworks',
+    'EN' => 'Frameworks',
+    'FR' => 'Frameworks',
   },
 );
 
@@ -86,9 +105,12 @@ sub new {
   my ($class, $session) = @_;
 
   my $this = $class->SUPER::new($session);
+  $this->{defaultStrings} = \%defaultStrings;
+  $this->{translationsTopic} = 'Applications.Metainfo.Translations';
 
   return $this;
 }
+
 
 ################################################################################
 sub processTemplate {
@@ -142,12 +164,12 @@ sub handleJobsTable {
     my $cell2 = $this->tml2rtf($2);
     my $cell3 = $this->tml2rtf($3);
     my $cell4 = $this->tml2rtf($4);
-    strip($cell1);
-    strip($cell2);
-    strip($cell3);
-    strip($cell4);
-    writeDebug("found jobs row '$cell1', '$cell2', '$cell3', '$cell4'");
-    unless ($cell1 || $cell2 || $cell3 || $cell4) { # skipp empty rows
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell1);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell2);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell3);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell4);
+    #writeDebug("found jobs row '$cell1', '$cell2', '$cell3', '$cell4'");
+    unless ($cell1 || $cell2 || $cell3 || $cell4) { # skip empty rows
       $nrRows--;
       next;
     }
@@ -240,11 +262,11 @@ sub handleEducationTable {
     my $cell1 = $this->tml2rtf($1);
     my $cell2 = $this->tml2rtf($2);
     my $cell3 = $this->tml2rtf($3);
-    strip($cell1);
-    strip($cell2);
-    strip($cell3);
-    writeDebug("found education row '$cell1', '$cell2', '$cell3'");
-    unless ($cell1 || $cell2 || $cell3 ) { # skipp empty rows
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell1);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell2);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell3);
+    #writeDebug("found education row '$cell1', '$cell2', '$cell3'");
+    unless ($cell1 || $cell2 || $cell3 ) { # skip empty rows
       $nrRows--;
       next;
     }
@@ -316,7 +338,7 @@ sub handleSkills {
 
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $theTopic);
 
-  writeDebug("theWeb=$theWeb, theTopic=$theTopic");
+  #writeDebug("theWeb=$theWeb, theTopic=$theTopic");
 
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
@@ -332,7 +354,7 @@ sub handleSkills {
   my $formObj = $topicObj->fastget($formName);
   return '' unless $formObj;
 
-  my $skillsString = translate($theLang, 'skills');
+  my $skillsString = $this->translate($theLang, 'Skills');
   my $result = <<'HERE';
 {\pagebb $skillsString:\par \ltrrow}
 \trowd\ts24\trgaph108\trleft0
@@ -420,7 +442,7 @@ HERE
 
   # merge skills from CV module
   my %cvToSkillsMap = (
-    'MainFocus' => 'MainFocus', 
+    'MainFocus' => 'Main Focus', 
     'ProgrammingLanguages' => 'Programming', 
     'OperatingSystems' => 'Operating Systems', 
     'Databases' => 'Databases',
@@ -441,7 +463,7 @@ HERE
     next unless $value;
 
     my @values = split(/\s*,\s*/, $value);
-    my $label = translate($theLang, $cvToSkillsMap{$key});
+    my $label = $this->translate($theLang, $cvToSkillsMap{$key});
 
     push @{$skillsTable{$cvToSkillsMap{$key}}}, @values;
   }
@@ -450,8 +472,8 @@ HERE
   # create RTF table row
   my $found = 0;
   foreach my $key (sort keys %skillsTable) {
-    my $value = join(', ', sort @{$skillsTable{$key}});
-    my $label = translate($theLang, $key);
+    my $value = join(', ', map {$_ = $this->translate($theLang, $_) } sort @{$skillsTable{$key}});
+    my $label = $this->translate($theLang, $key);
     my $row = $rowTemplate;
     $row =~ s/\$value/$value/g;
     $row =~ s/\$label/$label/g;
@@ -520,7 +542,7 @@ BULLET
   # | 1. Client | 2. Branch | 3. Duration | 4. Extend | 5. Role | 6. Technology | 7. Tools |
   while ($temp =~ /\n\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|/g) {
     $nrRows++;
-    next if $nrRows == 1; # skipp table header
+    next if $nrRows == 1; # skip table header
     my $cell1 = $this->tml2rtf($1); # won't be used but we still parse it in
     my $cell2 = $this->tml2rtf($2);
     my $cell3 = $this->tml2rtf($3);
@@ -528,18 +550,20 @@ BULLET
     my $cell5 = $this->tml2rtf($5);
     my $cell6 = $this->tml2rtf($6);
     my $cell7 = $this->tml2rtf($7);
-    strip($cell1);
-    strip($cell2);
-    strip($cell3);
-    strip($cell4);
-    strip($cell5);
-    strip($cell6);
-    strip($cell7);
-    writeDebug("found projects row '$cell1', '$cell2', '$cell3', '$cell4', '$cell5', '$cell6', '$cell7'");
-    unless ($cell1 || $cell2 || $cell3 || $cell4 || $cell5 || $cell6 || $cell7) { # skipp empty rows
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell1);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell2);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell3);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell4);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell5);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell6);
+    Foswiki::Contrib::RtfContrib::Converter::strip($cell7);
+    #writeDebug("found projects row '$cell1', '$cell2', '$cell3', '$cell4', '$cell5', '$cell6', '$cell7'");
+    unless ($cell1 || $cell2 || $cell3 || $cell4 || $cell5 || $cell6 || $cell7) { # skip empty rows
       $nrRows--;
       next;
     }
+   
+    $cell3 = ' ('.$cell3.') ' if $cell3; 
 
     $result .= 
       $bullet.
@@ -550,44 +574,40 @@ BULLET
       '\fcs1\af0\afs28\fcs0'. 
       '\f37\fs28\cgrid'.
       '\b\sb240\keep '.
-      $cell2.' ('.$cell3.') \par}'.
-      '{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
-      translate($theLang, 'description').':\par}'.
-      '{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell4.'\par}'.
-      '{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
-      translate($theLang, 'tasks').':\par}'.
-      '{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell5.'\par}'.
-      '{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
-      translate($theLang, 'technologies').':\par}'.
-      '{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell6.'\par}'.
-      '{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
-      translate($theLang, 'tools').':\par}'.
-      '{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell7.'\par}';
+      $cell2.$cell3.' \par}';
+
+    if ($cell4) {
+      $result .=
+	'{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
+	$this->translate($theLang, 'Description').':\par}'.
+	'{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell4.'\par}';
+    }
+
+    if ($cell5) {
+      $result .=
+	'{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
+	$this->translate($theLang, 'Role').':\par}'.
+	'{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell5.'\par}';
+    }
+
+    if ($cell6) {
+      $result .=
+	'{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
+	$this->translate($theLang, 'Technologies').':\par}'.
+	'{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell6.'\par}';
+    }
+
+    if ($cell7) {
+      $result .=
+	'{\pard\li1134\ri0\cs29\b\f37\fs24\sb120\keep '.
+	$this->translate($theLang, 'Tools').':\par}'.
+	'{\pard\li1134\ri0\fcs0\cs30\f37 '.$cell7.'\par}';
+    }
   }
   $result .= '}'."\n";
-  writeDebug("result=$result");
+  #writeDebug("result=$result");
 
   return ($nrRows>1)?$theHeader.$result.$theFooter:'';
-}
-
-################################################################################
-sub translate {
-  my ($lang, $key) = @_;
-
-  $lang = uc($lang);
-
-  writeDebug("translate($lang, $key)");
-
-  return "undefined language '$lang'" 
-    unless $strings{$lang};
-
-  return $strings{$lang}{$key} || $key;
-}
-
-################################################################################
-sub strip {
-  $_[0] =~ s/^\s+//o;
-  $_[0] =~ s/\s+$//o;
 }
 
 1;
