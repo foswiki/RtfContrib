@@ -5,5 +5,5 @@ BEGIN {
 use Foswiki::Contrib::Build;
 
 $build = new Foswiki::Contrib::Build('RtfContrib');
-$build->build($build->{target});
+$build->build( $build->{target} );
 
