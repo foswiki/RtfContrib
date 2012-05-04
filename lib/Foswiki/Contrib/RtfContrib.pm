@@ -22,63 +22,64 @@ $RELEASE = 'v2.00';
 
 ################################################################################
 sub export {
-  my $session = shift;
+    my $session = shift;
 
-  $Foswiki::Plugins::SESSION = $session;
-  my $query = Foswiki::Func::getCgiQuery();
-  my $converterName = $query->param('converter');
-  my $impl;
-  if ($converterName) {
-    $impl = 
-      $Foswiki::cfg{RtfContrib}{Converters}{$converterName} ||
-      $Foswiki::cfg{RtfContrib}{Converters}{$converterName} ;
-  }
+    $Foswiki::Plugins::SESSION = $session;
+    my $query         = Foswiki::Func::getCgiQuery();
+    my $converterName = $query->param('converter');
+    my $impl;
+    if ($converterName) {
+        $impl = $Foswiki::cfg{RtfContrib}{Converters}{$converterName}
+          || $Foswiki::cfg{RtfContrib}{Converters}{$converterName};
+    }
 
-  # create a new converter
-  my $converter = newConverter($session, $impl);
+    # create a new converter
+    my $converter = newConverter( $session, $impl );
 
-  # generate the rtf
-  my ($result, $errorMsg) = $converter->genRtf();
+    # generate the rtf
+    my ( $result, $errorMsg ) = $converter->genRtf();
 
-  if ($errorMsg) {
-    $session->writeCompletePage("ERROR: $errorMsg\n\n", 'view');
-    return;
-  } 
+    if ($errorMsg) {
+        $session->writeCompletePage( "ERROR: $errorMsg\n\n", 'view' );
+        return;
+    }
 
-  # write the rtf file
-  $converter->cacheRtf($result);
-  
-  # prepair the answer to the request
-  my $viewNow = $query->param('view') || '';
-  $viewNow = ($viewNow eq 'on')?1:0;
+    # write the rtf file
+    $converter->cacheRtf($result);
 
-  if ($viewNow) {
-    $session->writeCompletePage($result, 'rtf', 'application/rtf');
-  } else {
-    my $url = 
-      $session->getScriptUrl(1, 'oops', $converter->{web}, $converter->{topic},
-        template => 'oopsrtf',
-        param1 => $converter->getUrlName(),
-      );
+    # prepair the answer to the request
+    my $viewNow = $query->param('view') || '';
+    $viewNow = ( $viewNow eq 'on' ) ? 1 : 0;
 
-    $session->redirect($url);
-  }
+    if ($viewNow) {
+        $session->writeCompletePage( $result, 'rtf', 'application/rtf' );
+    }
+    else {
+        my $url = $session->getScriptUrl(
+            1, 'oops', $converter->{web}, $converter->{topic},
+            template => 'oopsrtf',
+            param1   => $converter->getUrlName(),
+        );
+
+        $session->redirect($url);
+    }
 }
 
 ################################################################################
 sub newConverter {
-  my ($session, $impl) = @_;
+    my ( $session, $impl ) = @_;
 
-  $impl ||= $Foswiki::cfg{RtfContrib}{DefaultConverter} 
-    || $Foswiki::cfg{RtfContrib}{DefaultConverter}
-    || 'Foswiki::Contrib::RtfContrib::Converter';
+    $impl ||=
+         $Foswiki::cfg{RtfContrib}{DefaultConverter}
+      || $Foswiki::cfg{RtfContrib}{DefaultConverter}
+      || 'Foswiki::Contrib::RtfContrib::Converter';
 
-  #print STDERR "impl=$impl\n";
+    #print STDERR "impl=$impl\n";
 
-  eval 'use '.$impl;
-  die $@ if $@;
+    eval 'use ' . $impl;
+    die $@ if $@;
 
-  return $impl->new($session);
+    return $impl->new($session);
 }
 
 1;
