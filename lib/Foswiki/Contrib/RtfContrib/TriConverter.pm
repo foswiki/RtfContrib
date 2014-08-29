@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2010 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2014 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -15,6 +15,8 @@
 package Foswiki::Contrib::RtfContrib::TriConverter;
 
 use strict;
+use warnings;
+
 use Foswiki::Contrib::RtfContrib::Converter ();
 use Foswiki::Plugins::DBCachePlugin::Core ();
 use Foswiki::Plugins::EmployeePortalPlugin::Core ();
