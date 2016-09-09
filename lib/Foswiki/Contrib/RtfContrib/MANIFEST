@@ -1,6 +1,8 @@
 bin/rtf 0755
 data/System/RtfContrib.txt 0644
+lib/Foswiki/Contrib/RtfContrib/Config.spec 0644
 lib/Foswiki/Contrib/RtfContrib/Converter.pm 0644
+lib/Foswiki/Contrib/RtfContrib/DEPENDENCIES 0644
 lib/Foswiki/Contrib/RtfContrib.pm 0644
 lib/Foswiki/Contrib/RtfContrib/TriConverter.pm 0644
 templates/oopsrtfbase.tmpl 0644

@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2014 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2016 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

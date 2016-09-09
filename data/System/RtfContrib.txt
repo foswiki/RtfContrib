@@ -1,8 +1,6 @@
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1418734112" format="1.1"  version="1"}%
 ---+!! RtfContrib
-<!--
-   * Set SHORTDESCRIPTION = Extension to translate Foswiki markup to RTF
--->
-%SHORTDESCRIPTION%
+%FORMFIELD{"Description"}%
 
 %TOC%
 
@@ -54,18 +52,21 @@ generate while translating Foswiki markup to RTF.
 
 %$INSTALL_INSTRUCTIONS%
 
----++ Plugin Info
+---++ Dependencies
+%$DEPENDENCIES%
 
-|  Plugin Author(s): | Foswiki:Main/MichaelDaum |
-|  Copyright: | &copy; 2007-2014 Michael Daum http://michaeldaumconsulting.com |
-|  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
-|  Release: | %$RELEASE% |
-|  Version: | %$VERSION% |
-|  Change History: | <!-- versions below in reverse order -->&nbsp; |
+---++ Change History
+|  09 Sep 2016: | added missing Config.spec file |
 |  29 Aug 2014: | fully specify rest security |
 |  12 Feb 2010: | language support in RTF templates |
-|  Dependencies: | %$DEPENDENCIES% |
-|  Plugin Home: | Foswiki:Extensions/RtfContrib |
-|  Support: | Foswiki:Support/RtfContrib |
 
-<!-- Do _not_ attempt to edit this topic; it is auto-generated. Please add comments/questions/remarks to the Dev topic instead. -->
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="Author" title="Author" value="Foswiki:Main/MichaelDaum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2007-2016 Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/RtfContrib"}%
+%META:FIELD{name="License" title="License" value="[[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]]"}%
+%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/%TOPIC%"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Support/RtfContrib"}%
+%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%
