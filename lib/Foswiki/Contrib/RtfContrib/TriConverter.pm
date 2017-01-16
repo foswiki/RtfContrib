@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2016 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2017 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@ use strict;
 use warnings;
 
 use Foswiki::Contrib::RtfContrib::Converter ();
-use Foswiki::Plugins::DBCachePlugin::Core ();
+use Foswiki::Plugins::DBCachePlugin ();
 use Foswiki::Plugins::EmployeePortalPlugin::Core ();
 use Foswiki::Plugins::ClassificationPlugin::Core ();
 use Foswiki::Attrs ();
@@ -117,7 +117,7 @@ sub handleJobsTable {
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $theTopic);
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
 
   my $topicObj = $this->{db}->fastget($theTopic);
@@ -216,7 +216,7 @@ sub handleEducationTable {
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $theTopic);
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
 
   my $topicObj = $this->{db}->fastget($theTopic);
@@ -314,7 +314,7 @@ sub handleSkills {
 
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
 
   my $topicObj = $db->fastget($theTopic);
@@ -478,7 +478,7 @@ sub handleCourseTable {
 
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
 
   my $mainRefereeSearch = new Foswiki::Contrib::DBCacheContrib::Search(<<"HERE");
@@ -654,7 +654,7 @@ sub handleProjects {
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $theTopic);
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
 
   my $topicObj = $this->{db}->fastget($theTopic);

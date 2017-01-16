@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2016 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2017 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@ use warnings;
 
 our $debug;
 
-use Foswiki::Plugins::DBCachePlugin::Core ();
+use Foswiki::Plugins::DBCachePlugin ();
 use Foswiki::Attrs ();
 use Foswiki::Sandbox ();
 
@@ -59,7 +59,7 @@ sub new {
   $this->{defaultRtfTemplate} = $Foswiki::cfg{RtfContrib}{DefaultRtfTemplate} 
     || "$Foswiki::cfg{SystemWebName}.RtfContrib.default-template.rtf";
 
-  $this->{db} = Foswiki::Plugins::DBCachePlugin::Core::getDB($this->{web});
+  $this->{db} = Foswiki::Plugins::DBCachePlugin::getDB($this->{web});
   die "unable to get cache for web $this->{web}" unless $this->{db};
 
   mkdir $this->{cacheDir} unless -d $this->{cacheDir};
@@ -522,7 +522,7 @@ sub handleCell {
 
   my $db = $this->{db};
   if ($theWeb ne $this->{web}) {
-    $db = Foswiki::Plugins::DBCachePlugin::Core::getDB($theWeb);
+    $db = Foswiki::Plugins::DBCachePlugin::getDB($theWeb);
   }
   my $topicObj = $db->fastget($theTopic);
   return '' unless $topicObj;

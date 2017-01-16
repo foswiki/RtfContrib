@@ -1,6 +1,6 @@
 # Plugin for Foswiki Collaboration Platform, http://foswiki.org/
 #
-# Copyright (C) 2007-2016 MichaelDaum http://michaeldaumconsulting.com
+# Copyright (C) 2007-2017 MichaelDaum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,8 +16,8 @@ package Foswiki::Contrib::RtfContrib;
 use strict;
 use warnings;
 
-our $VERSION = '2.11';
-our $RELEASE = '09 Sep 2016';
+our $VERSION = '2.12';
+our $RELEASE = '16 Jan 2017';
 our $SHORTDESCRIPTION = 'Extension to translate Foswiki markup to RTF';
 
 ################################################################################
